@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"import pptx; print\\(''python-pptx already installed:'', pptx.__version__\\)\")",
+      "Bash(pip install python-pptx)",
+      "Bash(python /tmp/extract_pptx.py)",
+      "Bash(/tmp/extract_pptx2.py:*)",
+      "Bash(python /tmp/extract_pptx2.py)",
+      "Bash(python -c \":*)",
+      "Bash(python -:*)",
+      "Bash(python -c \"import sys; sys.stdout.buffer.write\\(sys.stdin.buffer.read\\(\\)\\)\")",
+      "Bash(/tmp/slide2.py:*)",
+      "Bash(PYTHONIOENCODING=utf-8 python /tmp/slide2.py)",
+      "Bash(/tmp/slide2_full.py:*)",
+      "Bash(PYTHONIOENCODING=utf-8 python /tmp/slide2_full.py)",
+      "Bash(start \"\" \"C:\\\\Users\\\\User\\\\createslide\\\\.claude-design\\\\slide-previews\\\\style-a.html\")",
+      "Bash(timeout /t 1)",
+      "Bash(start \"\" \"C:\\\\Users\\\\User\\\\createslide\\\\.claude-design\\\\slide-previews\\\\style-b.html\")",
+      "Bash(start \"\" \"C:\\\\Users\\\\User\\\\createslide\\\\.claude-design\\\\slide-previews\\\\style-c.html\")",
+      "Bash(cmd.exe /c \"start \"\"\"\" \"\"C:\\\\Users\\\\User\\\\createslide\\\\.claude-design\\\\slide-previews\\\\style-a.html\"\"\")",
+      "Bash(cmd.exe /c \"start \"\"\"\" \"\"C:\\\\Users\\\\User\\\\createslide\\\\.claude-design\\\\slide-previews\\\\style-b.html\"\"\")",
+      "Bash(cmd.exe /c \"start \"\"\"\" \"\"C:\\\\Users\\\\User\\\\createslide\\\\.claude-design\\\\slide-previews\\\\style-c.html\"\"\")",
+      "Bash(/c/Users/User/createslide/scripts/extract_videos.py:*)",
+      "Bash(python \"C:/Users/User/createslide/scripts/extract_videos.py\")",
+      "Bash(cmd.exe /c \"start \"\"\"\" \"\"C:\\\\Users\\\\User\\\\createslide\\\\presentation.html\"\"\")",
+      "Bash(/c/Users/User/createslide/scripts/fix_numbers.py:*)",
+      "Bash(python /c/Users/User/createslide/scripts/fix_numbers.py)",
+      "Bash(/c/Users/User/createslide/scripts/fix_numbers2.py:*)",
+      "Bash(python /c/Users/User/createslide/scripts/fix_numbers2.py)",
+      "Bash(python3 -c \":*)",
+      "Bash(python -c \"import pptx; print\\(pptx.__version__\\)\")",
+      "Bash(python \"C:\\\\Users\\\\User\\\\createslide\\\\scripts\\\\make_pptx.py\")",
+      "Bash(python -c \"import os; f=r''C:\\\\Users\\\\User\\\\createslide\\\\智慧棒球科技簡報.pptx''; print\\(''EXISTS'' if os.path.exists\\(f\\) else ''NOT FOUND'', os.path.getsize\\(f\\) if os.path.exists\\(f\\) else 0\\)\")",
+      "Bash(python -c \"from pptx import Presentation; prs=Presentation\\(r''C:\\\\Users\\\\User\\\\createslide\\\\智慧棒球科技簡報.pptx''\\); print\\(''slides:'', len\\(prs.slides\\)\\)\")",
+      "Bash(pip install python-pptx -q)",
+      "Bash(python /c/Users/User/.claude/skills/frontend-slides/scripts/extract-pptx.py \"智慧棒球科技簡報.pptx\" \".\")",
+      "Bash(start \"\" \"/c/Users/User/createslide2/智慧棒球科技簡報.html\")",
+      "Bash(ls /c/Users/User/createslide2/assets/*.mp4)",
+      "Bash(ls /c/Users/User/createslide2/assets/*.jpg /c/Users/User/createslide2/assets/*.png)"
+    ]
+  }
+}

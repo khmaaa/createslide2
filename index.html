@@ -1,0 +1,1848 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智慧棒球科技 — 工研院中分院</title>
+
+    <!-- Fonts: Barlow Condensed for display, Noto Sans TC for Chinese -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&family=Noto+Sans+TC:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* ===========================================
+           CSS CUSTOM PROPERTIES — BASEBALL NIGHT THEME
+           Deep navy + electric blue + data green
+           =========================================== */
+        :root {
+            --bg-primary: #020c1b;
+            --bg-secondary: #071428;
+            --bg-card: rgba(10, 30, 60, 0.7);
+            --bg-card-solid: #0a1e3c;
+            --text-primary: #e8f4ff;
+            --text-secondary: #7cabc7;
+            --text-muted: #3a6080;
+            --accent-blue: #0ea5e9;
+            --accent-cyan: #22d3ee;
+            --accent-green: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-glow: rgba(14, 165, 233, 0.25);
+            --border-subtle: rgba(14, 165, 233, 0.15);
+            --grid-line: rgba(14, 165, 233, 0.05);
+
+            /* Typography — clamp() for all sizes */
+            --font-display: 'Barlow Condensed', sans-serif;
+            --font-body: 'Noto Sans TC', sans-serif;
+            --title-size: clamp(2.2rem, 6vw, 5.5rem);
+            --h2-size: clamp(1.4rem, 3.5vw, 2.8rem);
+            --h3-size: clamp(1rem, 2.2vw, 1.6rem);
+            --body-size: clamp(0.78rem, 1.4vw, 1.05rem);
+            --small-size: clamp(0.75rem, 1vw, 0.9rem);
+            --stat-size: clamp(2.5rem, 7vw, 6rem);
+
+            /* Spacing */
+            --slide-padding: clamp(1.5rem, 4vw, 4rem);
+            --content-gap: clamp(0.6rem, 1.5vw, 1.5rem);
+            --element-gap: clamp(0.3rem, 0.8vw, 0.8rem);
+
+            /* Animation */
+            --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --duration: 0.65s;
+        }
+
+        /* ===========================================
+           BASE RESET
+           =========================================== */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* ===========================================
+           VIEWPORT BASE (mandatory)
+           =========================================== */
+        html,
+        body {
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        html {
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+        }
+
+        /* Each slide = exact viewport */
+        .slide {
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .slide-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            max-height: 100%;
+            overflow: hidden;
+            padding: var(--slide-padding);
+        }
+
+        /* ===========================================
+           BACKGROUND EFFECTS
+           Grid pattern + subtle gradient mesh
+           =========================================== */
+        .slide::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .slide>* {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Accent glow orbs */
+        .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ===========================================
+           TYPOGRAPHY
+           =========================================== */
+        .display-font {
+            font-family: var(--font-display);
+        }
+
+        h1 {
+            font-family: var(--font-display);
+            font-size: var(--title-size);
+            font-weight: 900;
+            line-height: 1.0;
+            letter-spacing: -0.01em;
+        }
+
+        h2 {
+            font-family: var(--font-display);
+            font-size: var(--h2-size);
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: 0.01em;
+        }
+
+        h3 {
+            font-family: var(--font-body);
+            font-size: var(--h3-size);
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        p,
+        li {
+            font-size: var(--body-size);
+            line-height: 1.65;
+            color: var(--text-secondary);
+        }
+
+        /* ===========================================
+           REVEAL ANIMATIONS
+           =========================================== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity var(--duration) var(--ease-expo),
+                transform var(--duration) var(--ease-expo);
+        }
+
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(calc(-1 * clamp(20px, 4vw, 40px)));
+            transition: opacity var(--duration) var(--ease-expo),
+                transform var(--duration) var(--ease-expo);
+        }
+
+        .reveal-scale {
+            opacity: 0;
+            transform: scale(0.92);
+            transition: opacity var(--duration) var(--ease-expo),
+                transform var(--duration) var(--ease-expo);
+        }
+
+        .reveal-blur {
+            opacity: 0;
+            filter: blur(20px);
+            transform: scale(0.95);
+            transition: opacity 1.5s var(--ease-expo), filter 1.5s var(--ease-expo), transform 1.5s var(--ease-expo);
+        }
+
+        .slide.visible .reveal,
+        .slide.visible .reveal-left,
+        .slide.visible .reveal-scale,
+        .slide.visible .reveal-blur {
+            opacity: 1;
+            transform: none;
+            filter: blur(0);
+        }
+
+        /* Staggered delays */
+        .d1 {
+            transition-delay: 0.08s;
+        }
+
+        .d2 {
+            transition-delay: 0.18s;
+        }
+
+        .d3 {
+            transition-delay: 0.28s;
+        }
+
+        .d4 {
+            transition-delay: 0.38s;
+        }
+
+        .d5 {
+            transition-delay: 0.48s;
+        }
+
+        .d6 {
+            transition-delay: 0.58s;
+        }
+
+        .d7 {
+            transition-delay: 0.68s;
+        }
+
+        /* ===========================================
+           PROGRESS BAR
+           =========================================== */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
+            width: 0%;
+            transition: width 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 0 8px var(--accent-blue);
+        }
+
+        /* ===========================================
+           NAVIGATION DOTS
+           =========================================== */
+        .nav-dots {
+            position: fixed;
+            right: clamp(0.75rem, 2vw, 1.5rem);
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: clamp(6px, 0.8vh, 10px);
+            z-index: 1000;
+        }
+
+        .nav-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            padding: 0;
+        }
+
+        .nav-dot.active {
+            background: var(--accent-blue);
+            box-shadow: 0 0 8px var(--accent-blue);
+            transform: scale(1.5);
+        }
+
+        /* ===========================================
+           SLIDE NUMBER
+           =========================================== */
+        .slide-num {
+            position: absolute;
+            bottom: clamp(0.75rem, 2vh, 1.5rem);
+            right: clamp(1rem, 3vw, 2.5rem);
+            font-family: var(--font-display);
+            font-size: var(--small-size);
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 0.1em;
+        }
+
+        /* ===========================================
+           ACCENT LINE DECORATOR
+           =========================================== */
+        .accent-line {
+            width: clamp(32px, 5vw, 60px);
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
+            border-radius: 2px;
+            margin-bottom: var(--content-gap);
+        }
+
+        /* ===========================================
+           CHAPTER TAG
+           =========================================== */
+        .chapter-tag {
+            display: inline-block;
+            font-family: var(--font-display);
+            font-size: var(--small-size);
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--accent-blue);
+            border: 1px solid var(--accent-blue);
+            padding: 0.25em 0.8em;
+            border-radius: 2px;
+            margin-bottom: var(--element-gap);
+        }
+
+        /* ===========================================
+           STAT CARDS (Title slide)
+           =========================================== */
+        .stats-row {
+            display: flex;
+            gap: clamp(1rem, 3vw, 3rem);
+            margin-top: clamp(1rem, 3vh, 2.5rem);
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15em;
+        }
+
+        .stat-number {
+            font-family: var(--font-display);
+            font-size: var(--stat-size);
+            font-weight: 900;
+            line-height: 1;
+            color: var(--accent-cyan);
+            text-shadow: 0 0 30px rgba(34, 211, 238, 0.4);
+        }
+
+        .stat-label {
+            font-size: var(--small-size);
+            color: var(--text-secondary);
+            font-weight: 500;
+            line-height: 1.3;
+        }
+
+        .stat-unit {
+            font-family: var(--font-display);
+            font-size: var(--h3-size);
+            color: var(--accent-blue);
+            margin-left: 0.1em;
+        }
+
+        /* ===========================================
+           FEATURE CARDS (Architecture slide)
+           =========================================== */
+        .feature-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: clamp(0.6rem, 1.5vw, 1.2rem);
+            margin-top: var(--content-gap);
+            /* Let cards fill remaining slide height */
+            flex: 1;
+            min-height: 0;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: clamp(0.6rem, 1.2vw, 1rem);
+            position: relative;
+            overflow: hidden;
+            /* Stack label on top, image fills rest */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
+        }
+
+        .feature-card .card-num {
+            font-family: var(--font-display);
+            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+            font-weight: 900;
+            color: var(--accent-blue);
+            opacity: 0.5;
+            line-height: 1;
+            margin-bottom: 0.2em;
+        }
+
+        .feature-card h3 {
+            font-size: clamp(1rem, 2vw, 1.4rem);
+            color: var(--text-primary);
+            margin-bottom: 0.25em;
+        }
+
+        .feature-card p {
+            font-size: clamp(0.9rem, 1.6vw, 1.2rem);
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Image wrapper fills remaining card height */
+        .card-img-wrap {
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin-top: clamp(0.4rem, 0.8vh, 0.7rem);
+            border-radius: 4px;
+            border: 1px solid var(--border-subtle);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .card-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 4px;
+            /* Removed fixed max-height — wrapper handles sizing */
+            display: block;
+        }
+
+        /* ===========================================
+           BULLET LIST
+           =========================================== */
+        .bullet-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: var(--element-gap);
+        }
+
+        .bullet-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6em;
+            font-size: var(--body-size);
+            color: var(--text-secondary);
+            line-height: 1.55;
+        }
+
+        .bullet-list li::before {
+            content: '';
+            display: block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            margin-top: 0.5em;
+            flex-shrink: 0;
+            box-shadow: 0 0 6px var(--accent-blue);
+        }
+
+        /* ===========================================
+           SLIDE IMAGE
+           =========================================== */
+        .slide-img {
+            max-width: 100%;
+            max-height: min(46vh, 380px);
+            object-fit: contain;
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .slide-img.full-bleed {
+            width: 100%;
+            max-height: min(50vh, 400px);
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        /* ===========================================
+           TWO-COLUMN LAYOUT
+           =========================================== */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(1rem, 3vw, 3rem);
+            align-items: center;
+        }
+
+        .two-col.text-right {
+            direction: ltr;
+        }
+
+        /* ===========================================
+           VIDEO DEMO BADGE
+           =========================================== */
+        .video-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+            font-family: var(--font-display);
+            font-size: var(--small-size);
+            font-weight: 700;
+            color: var(--accent-amber);
+            border: 1px solid var(--accent-amber);
+            padding: 0.3em 0.8em;
+            border-radius: 4px;
+            width: fit-content;
+            margin-top: var(--element-gap);
+        }
+
+        .video-badge::before {
+            content: '▶';
+            font-size: 0.7em;
+        }
+
+        /* ===========================================
+           VENUE GRID (Slide 11)
+           =========================================== */
+        .venue-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: clamp(0.5rem, 1.2vw, 1rem);
+        }
+
+        .venue-img-wrap {
+            position: relative;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .venue-img-wrap img {
+            width: 100%;
+            max-height: clamp(140px, 28vh, 260px);
+            object-fit: contain;
+            display: block;
+            background: rgba(0, 0, 0, 0.15);
+        }
+
+        /* ===========================================
+           TIMELINE DOTS (Slide 13)
+           =========================================== */
+        .timeline {
+            display: flex;
+            align-items: flex-start;
+            gap: clamp(1rem, 3vw, 3rem);
+            margin-top: var(--content-gap);
+        }
+
+        .timeline-item {
+            flex: 1;
+            position: relative;
+            padding-top: 2em;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            top: 0.65em;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--border-subtle);
+        }
+
+        .timeline-item:first-child::before {
+            left: 50%;
+        }
+
+        .timeline-item:last-child::before {
+            right: 50%;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            top: 0.15em;
+            left: 50%;
+            transform: translateX(-50%);
+            width: clamp(10px, 1.5vw, 16px);
+            height: clamp(10px, 1.5vw, 16px);
+            border-radius: 50%;
+            background: var(--accent-blue);
+            box-shadow: 0 0 10px var(--accent-blue);
+        }
+
+        .timeline-year {
+            font-family: var(--font-display);
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            font-weight: 900;
+            color: var(--accent-cyan);
+            text-align: center;
+            margin-bottom: 0.3em;
+        }
+
+        .timeline-content {
+            font-size: var(--small-size);
+            color: var(--text-secondary);
+            text-align: center;
+            line-height: 1.55;
+        }
+
+        /* ===========================================
+           CHAPTER DIVIDER SLIDE
+           =========================================== */
+        .chapter-slide .chapter-num {
+            font-family: var(--font-display);
+            font-size: clamp(6rem, 20vw, 18rem);
+            font-weight: 900;
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(14, 165, 233, 0.15);
+            line-height: 0.9;
+            position: absolute;
+            bottom: -0.1em;
+            right: -0.05em;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        /* ===========================================
+           RESPONSIVE BREAKPOINTS
+           =========================================== */
+        @media (max-height: 700px) {
+            :root {
+                --slide-padding: clamp(0.8rem, 2.5vw, 2rem);
+                --content-gap: clamp(0.4rem, 1vw, 0.8rem);
+                --title-size: clamp(1.6rem, 5vw, 3.5rem);
+                --h2-size: clamp(1.1rem, 2.8vw, 2rem);
+                --stat-size: clamp(2rem, 5vw, 3.5rem);
+            }
+
+            .feature-cards {
+                gap: 0.5rem;
+            }
+
+            .stats-row {
+                gap: 1.2rem;
+                margin-top: 0.8rem;
+            }
+        }
+
+        @media (max-height: 600px) {
+            :root {
+                --slide-padding: clamp(0.6rem, 2vw, 1.2rem);
+                --title-size: clamp(1.3rem, 4vw, 2.5rem);
+                --body-size: clamp(0.75rem, 1.1vw, 0.9rem);
+            }
+
+            .nav-dots,
+            .slide-num {
+                display: none;
+            }
+
+            .accent-line {
+                margin-bottom: 0.5rem;
+            }
+        }
+
+        @media (max-height: 500px) {
+            :root {
+                --slide-padding: clamp(0.4rem, 1.5vw, 0.8rem);
+                --title-size: clamp(1rem, 3.5vw, 1.8rem);
+                --stat-size: clamp(1.5rem, 4vw, 2.5rem);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .feature-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+
+            .venue-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* ===========================================
+           REDUCED MOTION
+           =========================================== */
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.2s !important;
+            }
+
+            html {
+                scroll-behavior: auto;
+            }
+        }
+
+        /* ===========================================
+           SLIDE-SPECIFIC OVERRIDES
+           =========================================== */
+
+        /* Slide 1: Title — large centered layout */
+        #slide-1 {
+            background:
+                radial-gradient(ellipse at 80% 20%, rgba(14, 165, 233, 0.12) 0%, transparent 55%),
+                radial-gradient(ellipse at 10% 80%, rgba(34, 211, 238, 0.08) 0%, transparent 50%),
+                var(--bg-primary);
+            justify-content: flex-end;
+        }
+
+        #slide-1 .slide-content {
+            justify-content: flex-end;
+            padding-bottom: clamp(2rem, 6vh, 5rem);
+        }
+
+        #slide-1 .org-tag {
+            font-family: var(--font-display);
+            font-size: clamp(0.75rem, 1.4vw, 1rem);
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            color: var(--accent-blue);
+            margin-bottom: var(--element-gap);
+        }
+
+        #slide-1 h1 {
+            color: var(--text-primary);
+            font-size: clamp(3rem, 9vw, 8rem);
+            line-height: 0.95;
+            margin-bottom: 0.15em;
+        }
+
+        #slide-1 h1 .accent {
+            color: var(--accent-cyan);
+        }
+
+        #slide-1 .tagline {
+            font-size: clamp(0.85rem, 1.6vw, 1.1rem);
+            color: var(--text-secondary);
+            max-width: 55ch;
+            margin-top: 0.5em;
+        }
+
+        .stat-divider {
+            width: 1px;
+            background: var(--border-subtle);
+            align-self: stretch;
+        }
+
+        /* Slide 2: International Trend */
+        #slide-2 .two-col {
+            align-items: flex-start;
+        }
+
+        #slide-2 .content-side {
+            display: flex;
+            flex-direction: column;
+            gap: var(--content-gap);
+        }
+
+        /* Slide 3: Chapter — Radar vs Camera */
+        #slide-3 {
+            background:
+                radial-gradient(ellipse at 20% 50%, rgba(14, 165, 233, 0.1) 0%, transparent 60%),
+                var(--bg-primary);
+        }
+
+        .vs-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: clamp(0.8rem, 2vw, 2rem);
+            align-items: start;
+            margin-top: var(--content-gap);
+        }
+
+        .vs-col {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: clamp(0.8rem, 1.5vw, 1.2rem);
+        }
+
+        .vs-col h3 {
+            font-family: var(--font-display);
+            font-size: clamp(1rem, 2vw, 1.4rem);
+            font-weight: 800;
+            margin-bottom: 0.6em;
+        }
+
+        .vs-col.highlight {
+            border-color: var(--accent-blue);
+        }
+
+        .vs-col.highlight h3 {
+            color: var(--accent-cyan);
+        }
+
+        .vs-col h3.radar-title {
+            color: var(--accent-amber);
+        }
+
+        .vs-separator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+            font-weight: 900;
+            color: var(--text-muted);
+            padding-top: 2.5rem;
+        }
+
+        .vs-row {
+            display: flex;
+            gap: 0.5em;
+            font-size: clamp(0.9rem, 1.6vw, 1.2rem);
+            color: var(--text-secondary);
+            margin-bottom: 0.5em;
+            line-height: 1.5;
+        }
+
+        .check {
+            color: var(--accent-green);
+        }
+
+        .cross {
+            color: #ef4444;
+        }
+
+        /* Slides 5,6,7: Core Tech — two-column */
+        .core-tech-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(1.5rem, 3vw, 4rem);
+            align-items: center;
+            flex: 1;
+        }
+
+        .tech-badge {
+            font-family: var(--font-display);
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            color: transparent;
+            -webkit-text-stroke: 1px var(--accent-blue);
+            line-height: 1;
+            margin-bottom: 0.1em;
+            opacity: 0.25;
+        }
+
+        /* Slide 8,9,10: Venue — image dominant */
+        .venue-slide .slide-content {
+            padding-bottom: clamp(1rem, 2.5vh, 2rem);
+        }
+
+        .venue-caption {
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.15), rgba(10, 30, 60, 0.9));
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: clamp(0.8rem, 1.5vw, 1.2rem) clamp(1rem, 2vw, 1.8rem);
+            margin-bottom: var(--content-gap);
+        }
+
+        /* Slide 12: Social Impact */
+        #slide-12 .quote-block {
+            font-size: clamp(0.9rem, 1.6vw, 1.1rem);
+            color: var(--text-secondary);
+            border-left: 3px solid var(--accent-green);
+            padding-left: clamp(0.8rem, 1.5vw, 1.2rem);
+            line-height: 1.7;
+            margin-bottom: var(--content-gap);
+        }
+
+        /* Slide 13: Chapter divider — big number bg */
+        #slide-13 {
+            background:
+                radial-gradient(ellipse at 60% 40%, rgba(14, 165, 233, 0.08) 0%, transparent 60%),
+                var(--bg-primary);
+        }
+
+        /* Slide 13: 右半邊切換容器 */
+        .p13-right-wrap {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 右半邊兩個內容層 */
+        .p13-layer {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .p13-layer.p13-img-layer {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .p13-layer.p13-vid-layer {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        /* 切換到影片時 */
+        #slide-13.show-video .p13-layer.p13-img-layer {
+            opacity: 0;
+            transform: translateY(-40px);
+        }
+
+        #slide-13.show-video .p13-layer.p13-vid-layer {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 影片填滿 */
+        .p13-vid-layer .video-wrap {
+            width: 100%;
+        }
+
+        .p13-vid-layer video {
+            max-height: min(60vh, 480px);
+            width: 100%;
+            object-fit: contain;
+        }
+
+        /* 切換提示指示器 */
+        .p13-scroll-hint {
+            position: absolute;
+            bottom: clamp(0.5rem, 1.5vh, 1rem);
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3em;
+            font-family: var(--font-display);
+            font-size: var(--small-size);
+            color: var(--text-muted);
+            opacity: 1;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+            animation: p13hint 2s ease-in-out infinite;
+        }
+
+        #slide-13.show-video .p13-scroll-hint {
+            opacity: 0;
+        }
+
+        @keyframes p13hint {
+
+            0%,
+            100% {
+                transform: translateX(-50%) translateY(0);
+                opacity: 0.6;
+            }
+
+            50% {
+                transform: translateX(-50%) translateY(6px);
+                opacity: 1;
+            }
+        }
+
+        .p13-scroll-hint::after {
+            content: '▼';
+            font-size: 0.8em;
+            color: var(--accent-blue);
+        }
+
+        /* 影片狀態指示器 */
+        .p13-state-dot {
+            position: absolute;
+            bottom: clamp(0.5rem, 1.5vh, 1rem);
+            right: 1rem;
+            display: flex;
+            gap: 0.4em;
+            align-items: center;
+            z-index: 2;
+        }
+
+        .p13-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            transition: all 0.4s ease;
+        }
+
+        .p13-dot.active {
+            background: var(--accent-cyan);
+            box-shadow: 0 0 8px var(--accent-cyan);
+            transform: scale(1.5);
+        }
+
+        /* Slide 14: Future */
+        #slide-14 .future-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5em;
+            margin-top: var(--element-gap);
+        }
+
+        .future-tag {
+            font-family: var(--font-display);
+            font-size: var(--small-size);
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            padding: 0.3em 0.8em;
+            border-radius: 3px;
+            background: rgba(14, 165, 233, 0.1);
+            border: 1px solid var(--border-subtle);
+            color: var(--accent-blue);
+        }
+
+        /* Video container */
+        .video-wrap {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-subtle);
+            background: #000;
+        }
+
+        .video-wrap video {
+            width: 100%;
+            max-height: min(65vh, 520px);
+            display: block;
+            object-fit: contain;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Progress bar -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- Navigation dots (generated by JS) -->
+    <nav class="nav-dots" id="navDots" aria-label="投影片導覽"></nav>
+
+    <!-- =====================================================
+     SLIDE 1 — TITLE
+     ===================================================== -->
+    <section class="slide" id="slide-1" aria-label="封面">
+        <!-- Background glow orb -->
+        <div class="glow-orb"
+            style="width:min(50vw,600px);height:min(50vw,600px);background:radial-gradient(circle,rgba(14,165,233,0.12),transparent 70%);top:-10%;right:-10%;">
+        </div>
+        <div class="glow-orb"
+            style="width:min(30vw,400px);height:min(30vw,400px);background:radial-gradient(circle,rgba(34,211,238,0.08),transparent 70%);bottom:5%;left:5%;">
+        </div>
+
+        <div class="slide-content">
+            <p class="org-tag reveal d1">新興運動科技計畫</p>
+            <h1 class="reveal d2">
+                智慧<br>
+                <span class="accent">棒球</span><br>
+                科技
+            </h1>
+            <p class="tagline reveal d3">整合 AI 視覺辨識、無標記式生物力學與雲端數據平台<br>打造台灣棒球的科技基礎建設</p>
+            <p class="tagline reveal d3" style="margin-top:0.3em;color:var(--text-muted);font-size:var(--small-size);">
+                場域科技化與跨域加值應用</p>
+
+            <!-- Key stats -->
+            <div class="stats-row reveal d4">
+                <div class="stat-card">
+                    <div class="stat-number">10<span class="stat-unit">mm</span></div>
+                    <div class="stat-label">電子好球帶<br>平均誤差</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-card">
+                    <div class="stat-number">3<span class="stat-unit">+</span></div>
+                    <div class="stat-label">職業場域<br>已導入</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-card">
+                    <div class="stat-number">15<span class="stat-unit">+</span></div>
+                    <div class="stat-label">生物力學<br>關節特徵數據</div>
+                </div>
+            </div>
+        </div>
+        <div class="slide-num">01 / 13</div>
+    </section>
+
+    <!-- =====================================================
+     SLIDE 2 — 國際趨勢
+     ===================================================== -->
+    <section class="slide" id="slide-2" aria-label="國際趨勢">
+        <div class="slide-content">
+            <div class="two-col">
+                <!-- Left: text -->
+                <div class="content-side">
+                    <span class="chapter-tag reveal d1">1·BENCHMARK</span>
+                    <div class="accent-line reveal d2"></div>
+                    <h2 class="reveal d2">MLB 發展數據應用已經超過<br><span style="color:var(--accent-cyan)">20 年</span></h2>
+
+                    <ul class="bullet-list" style="margin-top:var(--content-gap)">
+                        <li class="reveal d3">美國職棒自 <strong style="color:var(--text-primary)">2002
+                                年</strong>起導入科技工具數據採集，<strong style="color:var(--text-primary)">2020 年</strong>全面採用鷹眼系統
+                        </li>
+                        <li class="reveal d4">國內職棒聯盟規模較小，相關技術以導入 <strong
+                                style="color:var(--text-primary)">Trackman</strong> 系統為主</li>
+                        <li class="reveal d5">除了分析與訓練的應用，也提供觀賽娛樂服務</li>
+                    </ul>
+                </div>
+
+                <!-- Right: image -->
+                <div class="reveal-scale d3" style="display:flex;align-items:center;justify-content:center;">
+                    <img src="assets/slide2_img1.png" alt="MLB 科技統計展示" class="slide-img full-bleed">
+                </div>
+            </div>
+        </div>
+        <div class="slide-num">02 / 13</div>
+    </section>
+
+    <!-- =====================================================
+     SLIDE 3 — 雷達 vs 攝影機比較
+     ===================================================== -->
+    <section class="slide chapter-slide" id="slide-3" aria-label="雷達與攝影機比較">
+        <div class="glow-orb"
+            style="width:min(40vw,500px);height:min(40vw,500px);background:radial-gradient(circle,rgba(14,165,233,0.1),transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);">
+        </div>
+
+        <div class="slide-content">
+            <span class="chapter-tag reveal d1">1·BENCHMARK</span>
+            <div class="accent-line reveal d2"></div>
+            <h2 class="reveal d2">雷達 vs 攝影機</h2>
+
+            <div class="vs-grid" style="margin-top:var(--content-gap)">
+                <!-- Radar column -->
+                <div class="vs-col reveal d3">
+                    <h3 class="radar-title">雷達系統</h3>
+                    <div class="vs-row"><span class="check">✓</span>數據量測快速</div>
+                    <div class="vs-row"><span class="check">✓</span>架設簡便</div>
+                    <div class="vs-row"><span class="cross">✗</span>無法捕捉球道軌跡</div>
+                    <div class="vs-row"><span class="cross">✗</span>無法偵測縫線特徵</div>
+                    <div class="vs-row"><span class="cross">✗</span>無球員辨識</div>
+                    <div class="vs-row"><span class="cross">✗</span>無法重建揮棒軌跡</div>
+                </div>
+
+                <!-- VS -->
+                <div class="vs-separator">VS</div>
+
+                <!-- Camera column -->
+                <div class="vs-col highlight reveal d4">
+                    <h3>攝影機視覺系統</h3>
+                    <div class="vs-row"><span class="check">✓</span>完整球道軌跡追蹤</div>
+                    <div class="vs-row"><span class="check">✓</span>16 項投球指標全覆蓋</div>
+                    <div class="vs-row"><span class="check">✓</span>縫線效應 (SSW) 偵測</div>
+                    <div class="vs-row"><span class="check">✓</span>出手點辨識</div>
+                    <div class="vs-row"><span class="check">✓</span>擊球落點 3D 重建</div>
+                    <div class="vs-row"><span class="check">✓</span>生物力學動作分析</div>
+                </div>
+            </div>
+
+            <p class="reveal d5"
+                style="margin-top:var(--content-gap);font-size:var(--small-size);color:var(--text-muted);">
+                ＊115 年包含所有 MLB Statcast 公開數據，其中揮擊軌跡、擊球落點、出手延伸等數據更是只有電腦視覺技術才能捕捉到的
+            </p>
+        </div>
+        <div class="slide-num">03 / 13</div>
+    </section>
+
+    <!-- =====================================================
+     SLIDE 4 — 整體產品架構
+     ===================================================== -->
+    <section class="slide" id="slide-4" aria-label="3大研發重點">
+        <div class="slide-content" style="justify-content:flex-start;padding-top:clamp(1.2rem,3vh,2.5rem)">
+            <span class="chapter-tag reveal d1">2 · 核心技術</span>
+            <div class="accent-line reveal d2"></div>
+            <h2 class="reveal d2">3大研發重點</h2>
+
+            <div class="feature-cards reveal d3">
+                <!-- Card 01 -->
+                <div class="feature-card">
+                    <div class="card-num">01</div>
+                    <h3>電子好球帶</h3>
+                    <p>AI 攝影機即時球道追蹤，16 項投球指標<br>球速 / 旋轉數 / 旋轉軸 / 位移全覆蓋</p>
+                    <div class="card-img-wrap">
+                        <img src="assets/slide4_img3.png" alt="電子好球帶介面" class="card-img">
+                    </div>
+                </div>
+
+                <!-- Card 02 -->
+                <div class="feature-card">
+                    <div class="card-num">02</div>
+                    <h3>無標記式生物力學</h3>
+                    <p>3D 關節座標重建<br>肩膀分離、肘關節內翻力矩，無需穿戴感測器</p>
+                    <div class="card-img-wrap" style="background:#000">
+                        <video src="assets/demo8_training_scenario.mp4" autoplay muted loop playsinline
+                            style="width:100%;height:100%;object-fit:contain;display:block;border-radius:4px;"></video>
+                    </div>
+                </div>
+
+                <!-- Card 03 -->
+                <div class="feature-card">
+                    <div class="card-num">03</div>
+                    <h3>雲端數據平台</h3>
+                    <p>賽後雲端分析、歷史數據查詢<br>3D 渲染轉播服務</p>
+                    <div class="card-img-wrap">
+                        <img src="assets/slide4_img2.png" alt="球速數據圖表" class="card-img">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slide-num">04 / 13</div>
+    </section>
+
+    <!-- =====================================================
+     SLIDE 5 — 核心技術① 電子好球帶
+     ===================================================== -->
+    <section class="slide" id="slide-5" aria-label="核心技術一 電子好球帶">
+        <div class="slide-content">
+            <div class="core-tech-layout">
+                <!-- Left: text -->
+                <div>
+                    <span class="chapter-tag reveal d1">核心技術 ①</span>
+                    <div class="tech-badge reveal d1">01</div>
+                    <div class="accent-line reveal d2"></div>
+                    <h2 class="reveal d2">電子好球帶</h2>
+                    <ul class="bullet-list" style="margin-top:var(--content-gap)">
+                        <li class="reveal d3"><strong style="color:var(--text-primary)">16
+                                項投球指標</strong>即時量測：球速、旋轉數、旋轉軸、縫線效應（SSW）</li>
+                        <li class="reveal d4">依照打者身高<strong style="color:var(--text-primary)">自動判斷好壞球</strong></li>
+                        <li class="reveal d5"><strong style="color:var(--text-primary)">自動球種辨識</strong>技術，精準分類各類投球</li>
+                        <li class="reveal d5"><strong style="color:var(--text-primary)">一公分以內誤差</li>
+                    </ul>
+                    <a href="http://localhost:3000" target="_blank" class="video-badge reveal d6"
+                        style="text-decoration:none;">Demo ① 球種辨識</a>
+                </div>
+
+                <!-- Right: image -->
+                <div class="reveal-scale d3" style="display:flex;align-items:center;justify-content:center;">
+                    <img src="assets/slide5_img1.png" alt="電子好球帶球點分布圖" class="slide-img"
+                        style="max-height:min(72vh,600px);width:100%;object-fit:contain;">
+                </div>
+            </div>
+        </div>
+        <div class="slide-num">05 / 13</div>
+    </section>
+
+    <!-- =====================================================
+     SLIDE 6 — 核心技術② 無標記式生物力學
+     ===================================================== -->
+    <section class="slide" id="slide-6" aria-label="核心技術二 無標記式生物力學">
+        <div class="slide-content">
+            <div class="core-tech-layout" style="grid-template-columns: 0.85fr 1.15fr; padding-right: 2rem;">
+                <!-- Left: text -->
+                <div>
+                    <span class="chapter-tag reveal d1">核心技術 ②</span>
+                    <div class="tech-badge reveal d1">02</div>
+                    <div class="accent-line reveal d2"></div>
+                    <h2 class="reveal d2">無標記式<br>生物力學分析</h2>
+                    <ul class="bullet-list" style="margin-top:var(--content-gap)">
+                        <li class="reveal d3"><strong style="color:var(--text-primary)">3D 關節座標即時捕捉</strong>，多視角影像互補技術
+                        </li>
+                        <li class="reveal d4">全身運動學指標：<strong style="color:var(--text-primary)">肩膀分離角度</strong>、<strong
+                                style="color:var(--text-primary)">肘關節內翻力矩</strong></li>
+                        <li class="reveal d5"><strong style="color:var(--text-primary)">出手點辨識</strong>（Release
+                            Point），精準分析動作變化</li>
+                    </ul>
+                    <div class="video-badge reveal d6">Demo ③ 出手點辨識實錄</div>
+                </div>
+
+                <!-- Right: video -->
+                <div class="reveal-scale d4">
+                    <div class="video-wrap" style="transform: scale(1.2); transform-origin: right center;">
+                        <video src="assets/demo1_bio_multiview.mp4" autoplay muted loop playsinline
+                            aria-label="無標記式生物力學多視角 Demo 影片"></video>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slide-num">06 / 13</div>
+    </section>
+
+    <!-- =====================================================
+     SLIDE 7 — 核心技術③ 雲端數據平台
+     ===================================================== -->
+    <section class="slide" id="slide-7" aria-label="核心技術三 雲端數據平台">
+        <div class="glow-orb"
+            style="width:min(25vw,450px);height:min(25vw,450px);background:radial-gradient(circle,rgba(16,185,129,0.07),transparent 70%);bottom:0;right:0;">
+        </div>
+
+        <div class="slide-content" style="justify-content:flex-start;padding-top:clamp(1.2rem,3vh,2.5rem)">
+            <span class="chapter-tag reveal d1">核心技術 ③</span>
+            <div class="accent-line reveal d2"></div>
+            <h2 class="reveal d2">雲端數據平台</h2>
+
+            <!-- Two-column: bullets left, video right -->
+            <div class="core-tech-layout"
+                style="flex:1;min-height:0;margin-top:var(--content-gap); grid-template-columns: 0.65fr 1.35fr; gap:4rem; padding-right: 1rem;">
+                <!-- Left: feature list -->
+                <div style="display:flex;flex-direction:column;gap:var(--element-gap); max-width:95%;">
+                    <div class="feature-card reveal d3" style="flex:none; padding:clamp(0.4rem, 0.8vw, 0.7rem)">
+                        <h3 style="color:var(--accent-cyan); font-size:clamp(0.8rem, 1.4vw, 1.1rem)">即時串接</h3>
+                        <p style="font-size:clamp(0.7rem, 1.2vw, 0.9rem); line-height:1.4">串聯天母棒球場鷹眼系統，賽中即時數據回傳與可視化</p>
+                    </div>
+                    <div class="feature-card reveal d4" style="flex:none; padding:clamp(0.4rem, 0.8vw, 0.7rem)">
+                        <h3 style="color:var(--accent-cyan); font-size:clamp(0.8rem, 1.4vw, 1.1rem)">歷史查詢</h3>
+                        <p style="font-size:clamp(0.7rem, 1.2vw, 0.9rem); line-height:1.4">賽後雲端分析，球員歷史數據多維度查詢（時段 / 對手 /
+                            場地）</p>
+                    </div>
+                    <div class="feature-card reveal d5" style="flex:none; padding:clamp(0.4rem, 0.8vw, 0.7rem)">
+                        <h3 style="color:var(--accent-cyan); font-size:clamp(0.8rem, 1.4vw, 1.1rem)">視覺化圖表</h3>
+                        <p style="font-size:clamp(0.7rem, 1.2vw, 0.9rem); line-height:1.4">以視覺化圖表呈現進階數據</p>
+                    </div>
+                    <div class="feature-card reveal d6" style="flex:none; padding:clamp(0.4rem, 0.8vw, 0.7rem)">
+                        <h3 style="color:var(--accent-cyan); font-size:clamp(0.8rem, 1.4vw, 1.1rem)">3D 渲染轉播</h3>
+                        <p style="font-size:clamp(0.7rem, 1.2vw, 0.9rem); line-height:1.4">即時 3D 渲染數據加值轉播服務，提升觀賽體驗</p>
+                    </div>
+                </div>
+
+                <!-- Right: platform demo video -->
+                <div class="reveal-scale d3"
+                    style="display:flex;align-items:center;justify-content:center;min-height:0">
+                    <div class="video-wrap" style="width:100%; transform: scale(1.05); transform-origin: right center;">
+                        <video src="assets/platform_demo0827.mp4" autoplay muted loop playsinline
+                            style="max-height:min(60vh,480px);" aria-label="雲端數據平台 Demo 影片"></video>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slide-num">07 / 13</div>
+    </section>
+
+    <!-- =====================================================
+     SLIDE 8 — 天母棒球場
+     ===================================================== -->
+    <section class="slide venue-slide" id="slide-8" aria-label="天母棒球場場域導入">
+        <div class="slide-content">
+            <div style="position:relative; top:-2.5rem;">
+                <span class="chapter-tag reveal d1">3·場域導入成果</span>
+            </div>
+            <div class="two-col" style="align-items:flex-start;gap:clamp(1rem,2.5vw,2.5rem)">
+                <div style="position:relative; top:-2.5rem;">
+                    <div class="accent-line reveal d2"></div>
+                    <h2 class="reveal d2">天母棒球場<br><span
+                            style="color:var(--text-secondary);font-size:0.65em;font-weight:600">職業級系統導入</span></h2>
+                    <ul class="bullet-list" style="margin-top:var(--content-gap)">
+                        <li class="reveal d3">鷹眼系統 × 3D球體軌跡捕捉技術<strong style="color:var(--text-primary)">完整整合</strong>
+                        </li>
+                        <li class="reveal d4">電子好球帶、進階數據收集<strong style="color:var(--text-primary)">同步運作</strong></li>
+                        <li class="reveal d5">職業中華職棒比賽<strong style="color:var(--text-primary)">實戰應用驗證</strong></li>
+                    </ul>
+                    <div class="video-badge reveal d6">Demo ① 天母球場系統總覽</div>
+                </div>
+                <div class="reveal-scale d3"
+                    style="display:flex;align-items:center; transform: scale(1.2); transform-origin: right center;">
+                    <img src="assets/slide8_img1.png" alt="天母棒球場攝影機配置示意圖" class="slide-img full-bleed"
+                        style="max-height:min(65vh,540px);width:100%;object-fit:contain;">
+                </div>
+            </div>
+        </div>
+        <div class="slide-num">08 / 13</div>
+    </section>
+
+    <!-- =====================================================
+     SLIDE 9 — 洲際棒球場 & 台北大巨蛋（合併）
+     ===================================================== -->
+    <section class="slide venue-slide" id="slide-9" aria-label="洲際棒球場與台北大巨蛋場域導入">
+        <div class="slide-content" style="justify-content:flex-start;padding-top:clamp(1rem,2.5vh,2rem)">
+            <span class="chapter-tag reveal d1">3·場域導入成果</span>
+            <div class="accent-line reveal d2"></div>
+            <h2 class="reveal d2">洲際棒球場 &amp; 台北大巨蛋</h2>
+
+            <!-- Two-column layout -->
+            <div
+                style="display:grid;grid-template-columns:1fr 1fr;gap:clamp(0.8rem,2vw,2rem);margin-top:var(--content-gap);flex:1;min-height:0;">
+
+                <!-- Left: 洲際棒球場 — title row + video -->
+                <div class="reveal d3"
+                    style="display:flex;flex-direction:column;gap:clamp(0.3rem,0.6vh,0.5rem);min-height:0;">
+                    <div style="display:flex;align-items:baseline;gap:0.6em;flex-shrink:0;">
+                        <h3
+                            style="color:var(--accent-cyan);font-family:var(--font-display);font-weight:800;font-size:var(--h3-size);line-height:1;">
+                            洲際棒球場</h3>
+                        <span style="color:var(--text-muted);font-size:var(--small-size);">14 台高速攝影機 · 全場系統</span>
+                    </div>
+                    <div class="video-wrap" style="flex:1;min-height:0;">
+                        <video src="assets/demo5_zhongji_1.mp4" autoplay muted loop playsinline
+                            style="width:100%;height:100%;object-fit:cover;display:block;"
+                            aria-label="洲際棒球場 Demo 影片"></video>
+                    </div>
+                </div>
+
+                <!-- Right: 台北大巨蛋 — title row + 2 images stacked -->
+                <div class="reveal d4"
+                    style="display:flex;flex-direction:column;gap:clamp(0.3rem,0.6vh,0.5rem);min-height:0;">
+                    <div style="display:flex;align-items:baseline;gap:0.6em;flex-shrink:0;">
+                        <h3
+                            style="color:var(--accent-amber);font-family:var(--font-display);font-weight:800;font-size:var(--h3-size);line-height:1;">
+                            台北大巨蛋</h3>
+                        <span style="color:var(--text-muted);font-size:var(--small-size);">中華職棒 · 台灣大賽 Game 1</span>
+                    </div>
+                    <!-- Images stacked vertically, each flex:1 → equal height, cover fills frame -->
+                    <div style="flex:1;min-height:0;display:flex;flex-direction:column;gap:clamp(0.3rem,0.6vh,0.5rem);">
+                        <div
+                            style="flex:1;min-height:0;border-radius:6px;overflow:hidden;border:1px solid var(--border-subtle);">
+                            <img src="assets/pic/大巨蛋1.jpg" alt="台北大巨蛋比賽實況一"
+                                style="width:100%;height:100%;object-fit:cover;display:block;">
+                        </div>
+                        <div
+                            style="flex:1;min-height:0;border-radius:6px;overflow:hidden;border:1px solid var(--border-subtle);">
+                            <img src="assets/pic/大巨蛋2.jpg" alt="台北大巨蛋比賽實況二"
+                                style="width:100%;height:100%;object-fit:cover;display:block;">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="slide-num">09 / 13</div>
+    </section>
+
+    <!-- =====================================================
+     SLIDE 10 — 進行中：龍潭名人堂 & 三重
+     ===================================================== -->
+    <section class="slide" id="slide-10" aria-label="進行中場域導入">
+        <div class="slide-content">
+            <span class="chapter-tag reveal d1">3·進行中場域導入</span>
+            <div class="accent-line reveal d2"></div>
+            <h2 class="reveal d2">龍潭名人堂 &amp; 三重棒球場</h2>
+
+            <div
+                style="display:grid;grid-template-columns:1fr 1fr;gap:clamp(1rem,2.5vw,2.5rem);margin-top:var(--content-gap);align-items:start">
+                <!-- Left: 龍潭名人堂 -->
+                <div class="reveal d3">
+                    <h3 style="color:var(--accent-cyan);margin-bottom:0.4em">龍潭名人堂</h3>
+                    <div class="venue-grid">
+                        <div class="venue-img-wrap"><img src="assets/slide11_img1.png" alt="龍潭名人堂球場照片"></div>
+                        <div class="venue-img-wrap"><img src="assets/slide11_img2.png" alt="龍潭名人堂球場照片二"></div>
+                    </div>
+                    <p style="margin-top:0.5em;font-size:var(--small-size)">建置內容：電子好球帶 + 投球生物力學分析</p>
+                    <p style="font-size:var(--small-size);color:var(--text-muted)">重點目標：數據影像收集與使用者回饋</p>
+                </div>
+
+                <!-- Right: 三重棒球場 -->
+                <div class="reveal d4">
+                    <h3 style="color:var(--accent-cyan);margin-bottom:0.4em">三重棒球場</h3>
+                    <div class="venue-grid">
+                        <div class="venue-img-wrap"><img src="assets/slide11_img3.png" alt="三重棒球場照片"></div>
+                        <div class="venue-img-wrap"><img src="assets/slide11_img4.png" alt="三重棒球場照片二"></div>
+                    </div>
+                    <p style="margin-top:0.5em;font-size:var(--small-size)">建置內容：Phase 1 球體數據捕捉（Basler 高速攝影機）</p>
+                    <p style="font-size:var(--small-size);color:var(--text-muted)">重點目標：球體縫線、位移計算及效能提升</p>
+                </div>
+            </div>
+        </div>
+        <div class="slide-num">10 / 13</div>
+    </section>
+
+    <!-- =====================================================
+     SLIDE 11 — 社會影響力
+     ===================================================== -->
+    <section class="slide" id="slide-11" aria-label="社會影響力">
+        <div class="glow-orb"
+            style="width:min(35vw,450px);height:min(35vw,450px);background:radial-gradient(circle,rgba(16,185,129,0.1),transparent 70%);bottom:0;left:0;">
+        </div>
+        <div class="slide-content">
+            <div class="two-col">
+                <div>
+                    <span class="chapter-tag reveal d1"
+                        style="border-color:var(--accent-green);color:var(--accent-green)">社會影響力</span>
+                    <div class="accent-line reveal d2"
+                        style="background:linear-gradient(90deg,var(--accent-green),var(--accent-cyan))"></div>
+                    <h2 class="reveal d2">用科技<br>幫助基層棒球</h2>
+                    <div class="quote-block reveal d3"
+                        style="line-height:1.0; margin-top:1.0em; margin-bottom:1.0em; padding:1.0em 1.0em;">
+                        將智慧棒球系統帶入偏遠地區學校，縮短城鄉資源差距，讓每位年輕球員都能獲得職業級的訓練資源。
+                    </div>
+                    <ul class="bullet-list" style="display:flex; flex-direction:column; gap:1.2em; line-height:1.4;">
+                        <li class="reveal d4"><strong
+                                style="color:var(--text-primary)">紅葉國小</strong>：台東偏鄉，棒球發源地之一，首批導入智慧訓練系統</li>
+                        <li class="reveal d5"><strong style="color:var(--text-primary)">忠孝國中</strong>：基層培訓場域，透過數據輔助教練決策
+                        </li>
+                        <li class="reveal d6">降低訓練門檻，培育台灣下一代棒球人才</li>
+                    </ul>
+                </div>
+                <div class="reveal-scale d3">
+                    <img src="assets/slide12_img1.jpg" alt="工研院技術人員在紅葉國小為球員講解數據" class="slide-img"
+                        style="max-height:min(46vh,380px);">
+                </div>
+            </div>
+        </div>
+        <div class="slide-num">11 / 13</div>
+    </section>
+
+    <!-- =====================================================
+     SLIDE 12 — 研發歷程 (Chapter divider)
+     ===================================================== -->
+    <section class="slide chapter-slide" id="slide-12" aria-label="研發歷程與未來規劃">
+        <div class="chapter-num">04</div>
+        <div class="glow-orb"
+            style="width:min(50vw,600px);height:min(50vw,600px);background:radial-gradient(circle,rgba(14,165,233,0.08),transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);">
+        </div>
+
+        <div class="slide-content" style="justify-content:center">
+            <span class="chapter-tag reveal d1">4·未來方向</span>
+            <div class="accent-line reveal d2"></div>
+            <h2 class="reveal d2">研發歷程與<br>未來規劃</h2>
+            <p class="reveal d3"
+                style="margin-top:var(--content-gap);font-size:var(--h3-size);color:var(--accent-cyan);font-family:var(--font-display);font-weight:700">
+                114 年 → 116 年 技術發展重點
+            </p>
+
+            <div class="timeline reveal d4">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-year">114 年</div>
+                    <div class="timeline-content">
+                        電子好球帶<br>
+                        天母 · 洲際場域導入<br>
+                        無標記生物力學與出手點捕捉<br>
+                        基層學校 - 紅葉國小 + 忠孝國中
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-year">115 年</div>
+                    <div class="timeline-content">
+                        視覺辨識技術強化<br>
+                        名人堂 · 三重棒球場建置<br>
+                        揮棒軌跡分析技術<br>
+                        雲端分析介面
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-year">116 年</div>
+                    <div class="timeline-content">
+                        擊球點分析(球棒+球)<br>
+                        4DGS影像重建<br>
+                        模組化訓練分析系統
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slide-num">12 / 13</div>
+    </section>
+
+    <!-- =====================================================
+     SLIDE 13 — 未來方向
+     ===================================================== -->
+    <section class="slide" id="slide-13" aria-label="未來方向">
+        <div class="glow-orb"
+            style="width:min(40vw,500px);height:min(40vw,500px);background:radial-gradient(circle,rgba(14,165,233,0.1),transparent 70%);top:-5%;right:-5%;">
+        </div>
+
+        <div class="slide-content"
+            style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; padding-top:0;">
+            <!-- 圖片 → 影片切換容器 -->
+            <div class="reveal-blur d1" style="position:relative; width:90%; max-width:1400px; height:85vh;">
+                <div class="p13-right-wrap"
+                    style="height:100%; display:flex; align-items:center; justify-content:center;">
+
+                    <!-- 層① 原始圖片 -->
+                    <div class="p13-layer p13-img-layer"
+                        style="width:100%; height:100%; display:flex; justify-content:center; align-items:center;">
+                        <img src="assets/slide14_img1.png" alt="Magnus/SSW 位移分離分析工具介面" class="slide-img"
+                            style="max-height:100%; max-width:100%; object-fit:contain;">
+                    </div>
+
+                    <!-- 層② 動作捕捉影片（滾動後顯示） -->
+                    <div class="p13-layer p13-vid-layer"
+                        style="width:100%; height:100%; display:flex; justify-content:center; align-items:center;">
+                        <div class="video-wrap"
+                            style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:transparent; border:none;">
+                            <video id="p13Video" src="assets/demo9_motion_capture.mp4" muted loop playsinline
+                                preload="metadata" aria-label="動作捕捉訓練情境 Demo 影片"
+                                style="max-height:100%; max-width:100%; object-fit:contain; border-radius:8px; border:1px solid var(--border-subtle);"></video>
+                        </div>
+                    </div>
+
+                    <!-- 狀態點指示器 -->
+                    <div class="p13-state-dot">
+                        <div class="p13-dot active" id="p13Dot0"></div>
+                        <div class="p13-dot" id="p13Dot1"></div>
+                    </div>
+                </div>
+
+                <!-- 捲動提示 -->
+                <div class="p13-scroll-hint" id="p13ScrollHint">向下捲動查看 Demo</div>
+            </div>
+        </div>
+        <div class="slide-num">13 / 13</div>
+    </section>
+
+    <!-- ===========================================
+     JAVASCRIPT — Slide Presentation Controller
+     =========================================== -->
+    <script>
+        'use strict';
+
+        /* =====================================================
+           SlidePresentation: keyboard, touch, scroll, progress,
+           nav dots, intersection observer
+           ===================================================== */
+        class SlidePresentation {
+            constructor() {
+                this.slides = Array.from(document.querySelectorAll('.slide'));
+                this.current = 0;
+                this.isScrolling = false;
+                this.totalSlides = this.slides.length;
+
+                this.progressBar = document.getElementById('progressBar');
+                this.navDots = document.getElementById('navDots');
+
+                this.buildNavDots();
+                this.setupIntersectionObserver();
+                this.setupKeyboard();
+                this.setupTouch();
+                this.setupWheel();
+                this.updateProgress(0);
+            }
+
+            /* Build nav dots */
+            buildNavDots() {
+                this.slides.forEach((_, i) => {
+                    const dot = document.createElement('button');
+                    dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+                    dot.setAttribute('aria-label', `投影片 ${i + 1}`);
+                    dot.addEventListener('click', () => this.goTo(i));
+                    this.navDots.appendChild(dot);
+                });
+            }
+
+            /* Intersection Observer: add .visible for animations, track current */
+            setupIntersectionObserver() {
+                const opts = { threshold: 0.55 };
+                const obs = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            const idx = this.slides.indexOf(entry.target);
+                            if (idx !== -1) {
+                                this.current = idx;
+                                this.updateNavDots(idx);
+                                this.updateProgress(idx);
+                            }
+                        }
+                    });
+                }, opts);
+                this.slides.forEach(s => obs.observe(s));
+            }
+
+            /* Keyboard: arrow keys, space, page up/down */
+            setupKeyboard() {
+                document.addEventListener('keydown', e => {
+                    switch (e.key) {
+                        case 'ArrowDown':
+                        case 'ArrowRight':
+                        case ' ':
+                            e.preventDefault();
+                            this.goTo(this.current + 1);
+                            break;
+                        case 'ArrowUp':
+                        case 'ArrowLeft':
+                            e.preventDefault();
+                            this.goTo(this.current - 1);
+                            break;
+                        case 'PageDown':
+                            e.preventDefault();
+                            this.goTo(this.current + 1);
+                            break;
+                        case 'PageUp':
+                            e.preventDefault();
+                            this.goTo(this.current - 1);
+                            break;
+                        case 'Home':
+                            e.preventDefault();
+                            this.goTo(0);
+                            break;
+                        case 'End':
+                            e.preventDefault();
+                            this.goTo(this.totalSlides - 1);
+                            break;
+                    }
+                });
+            }
+
+            /* Touch swipe support
+               NOTE: slide-13 同樣攔截觸控，實作右半邊切換 */
+            setupTouch() {
+                let startY = 0;
+                document.addEventListener('touchstart', e => {
+                    startY = e.touches[0].clientY;
+                }, { passive: true });
+                document.addEventListener('touchend', e => {
+                    const dy = startY - e.changedTouches[0].clientY;
+                    if (Math.abs(dy) < 50) return;
+
+                    const slide13 = document.getElementById('slide-13');
+                    const isOnSlide13 = (this.current === this.slides.indexOf(slide13));
+
+                    if (isOnSlide13 && slide13) {
+                        const isVideoShown = slide13.classList.contains('show-video');
+                        if (dy > 0 && !isVideoShown) {
+                            slide13VideoToggle(true);
+                            return;
+                        }
+                        if (dy < 0 && isVideoShown) {
+                            slide13VideoToggle(false);
+                            return;
+                        }
+                    }
+
+                    this.goTo(this.current + (dy > 0 ? 1 : -1));
+                }, { passive: true });
+            }
+
+            /* Mouse wheel with throttle
+               NOTE: slide-13 有特殊中間狀態（右半邊圖→影片切換），
+               需要攔截第一次往下捲動事件，用於切換右半邊內容 */
+            setupWheel() {
+                let lastTime = 0;
+                document.addEventListener('wheel', e => {
+                    const now = Date.now();
+                    if (now - lastTime < 800) return;
+
+                    const slide13 = document.getElementById('slide-13');
+                    const isOnSlide13 = (this.current === this.slides.indexOf(slide13));
+
+                    if (isOnSlide13 && slide13) {
+                        const isVideoShown = slide13.classList.contains('show-video');
+
+                        if (e.deltaY > 0 && !isVideoShown) {
+                            // 第一次向下：切換至影片，不換頁
+                            lastTime = now;
+                            slide13VideoToggle(true);
+                            return;
+                        }
+                        if (e.deltaY < 0 && isVideoShown) {
+                            // 向上：切換回圖片，不換頁
+                            lastTime = now;
+                            slide13VideoToggle(false);
+                            return;
+                        }
+                        // 其他情況（影片已顯示再往下 or 圖片狀態再往上）→ 正常換頁
+                    }
+
+                    lastTime = now;
+                    this.goTo(this.current + (e.deltaY > 0 ? 1 : -1));
+                }, { passive: true });
+            }
+
+            /* Navigate to slide index */
+            goTo(index) {
+                const clamped = Math.max(0, Math.min(this.totalSlides - 1, index));
+                this.slides[clamped].scrollIntoView({ behavior: 'smooth' });
+            }
+
+            /* Update progress bar */
+            updateProgress(index) {
+                const pct = this.totalSlides > 1
+                    ? (index / (this.totalSlides - 1)) * 100
+                    : 100;
+                this.progressBar.style.width = pct + '%';
+            }
+
+            /* Update active nav dot */
+            updateNavDots(index) {
+                const dots = this.navDots.querySelectorAll('.nav-dot');
+                dots.forEach((d, i) => d.classList.toggle('active', i === index));
+            }
+        }
+
+        /* =====================================================
+           Slide 13 右半邊切換 helper
+           ===================================================== */
+        function slide13VideoToggle(showVideo) {
+            const slide13 = document.getElementById('slide-13');
+            const video = document.getElementById('p13Video');
+            const dot0 = document.getElementById('p13Dot0');
+            const dot1 = document.getElementById('p13Dot1');
+            const hint = document.getElementById('p13ScrollHint');
+
+            if (!slide13 || !video) return;
+
+            if (showVideo) {
+                slide13.classList.add('show-video');
+                video.play().catch(() => { });
+                if (dot0) dot0.classList.remove('active');
+                if (dot1) dot1.classList.add('active');
+            } else {
+                slide13.classList.remove('show-video');
+                video.pause();
+                video.currentTime = 0;
+                if (dot0) dot0.classList.add('active');
+                if (dot1) dot1.classList.remove('active');
+            }
+        }
+
+        /* Boot */
+        document.addEventListener('DOMContentLoaded', () => {
+            new SlidePresentation();
+
+            /* Trigger visible for first slide immediately */
+            const first = document.querySelector('.slide');
+            if (first) first.classList.add('visible');
+
+            /* Slide 13：當離開此頁時，重置右半邊回圖片狀態 */
+            const slide13 = document.getElementById('slide-13');
+            if (slide13) {
+                const resetObs = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (!entry.isIntersecting) {
+                            // 離開 slide-13 時重置
+                            slide13VideoToggle(false);
+                        }
+                    });
+                }, { threshold: 0.1 });
+                resetObs.observe(slide13);
+            }
+        });
+    </script>
+
+</body>
+
+</html>
