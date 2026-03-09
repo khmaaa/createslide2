@@ -1055,6 +1055,52 @@
             display: block;
             object-fit: contain;
         }
+
+        /* ===========================================
+           PRINT STYLES FOR PDF CONVERSION
+           =========================================== */
+        @media print {
+
+            html,
+            body {
+                height: auto !important;
+                overflow: visible !important;
+                scroll-behavior: auto !important;
+                scroll-snap-type: none !important;
+                background: var(--bg-primary) !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .slide {
+                height: 100vh !important;
+                min-height: 100vh !important;
+                page-break-after: always;
+                break-after: page;
+                break-inside: avoid;
+                overflow: hidden !important;
+                scroll-snap-align: none !important;
+                position: relative !important;
+            }
+
+            /* Hide UI elements not needed in print */
+            .progress-bar,
+            .nav-dots,
+            .p13-scroll-hint {
+                display: none !important;
+            }
+
+            /* Force all reveal animations to their final state */
+            .reveal,
+            .reveal-left,
+            .reveal-scale,
+            .reveal-blur {
+                opacity: 1 !important;
+                transform: none !important;
+                filter: none !important;
+                transition: none !important;
+            }
+        }
     </style>
 </head>
 
@@ -1250,7 +1296,7 @@
                         <li class="reveal d3"><strong style="color:var(--text-primary)">16
                                 項投球指標</strong>即時量測：球速、旋轉數、旋轉軸、縫線效應（SSW）</li>
                         <li class="reveal d4">依照打者身高<strong style="color:var(--text-primary)">自動判斷好壞球</strong></li>
-                        <li class="reveal d5"><strong style="color:var(--text-primary)">自動球種辨識</strong>技術，精準分類各類投球</li>
+                        <li class="reveal d5"><strong style="color:var(--text-primary)">自動球種辨識</strong>精準分類各類投球</li>
                         <li class="reveal d5"><strong style="color:var(--text-primary)">一公分以內誤差</li>
                     </ul>
                     <a href="http://localhost:3000" target="_blank" class="video-badge reveal d6"
