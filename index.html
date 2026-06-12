@@ -500,6 +500,49 @@
             border-radius: 6px;
         }
 
+        /* Two-image crossfade carousel */
+        .img-carousel {
+            position: relative;
+            width: 100%;
+            max-width: 100%;
+            aspect-ratio: 4 / 3;
+            max-height: min(46vh, 380px);
+        }
+
+        .img-carousel .slide-img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            max-height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            animation: carouselFade 10s infinite ease-in-out;
+        }
+
+        .img-carousel .slide-img:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .img-carousel .slide-img:nth-child(2) {
+            animation-delay: 5s;
+        }
+
+        @keyframes carouselFade {
+            0%, 40% { opacity: 1; }
+            50%, 90% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        /* Slide 2 (ITRI intro): wider right column, no crop */
+        #slide-itri .two-col {
+            grid-template-columns: 0.8fr 1.2fr;
+        }
+
+        #slide-itri .img-carousel .slide-img {
+            object-fit: contain;
+        }
+
         /* ===========================================
            TWO-COLUMN LAYOUT
            =========================================== */
@@ -882,144 +925,6 @@
             margin-bottom: var(--content-gap);
         }
 
-        /* Slide 12: Social Impact */
-        #slide-12 .quote-block {
-            font-size: clamp(0.9rem, 1.6vw, 1.1rem);
-            color: var(--text-secondary);
-            border-left: 3px solid var(--accent-green);
-            padding-left: clamp(0.8rem, 1.5vw, 1.2rem);
-            line-height: 1.7;
-            margin-bottom: var(--content-gap);
-        }
-
-        /* Slide 13: Chapter divider — big number bg */
-        #slide-13 {
-            background:
-                radial-gradient(ellipse at 60% 40%, rgba(14, 165, 233, 0.08) 0%, transparent 60%),
-                var(--bg-primary);
-        }
-
-        /* Slide 13: 右半邊切換容器 */
-        .p13-right-wrap {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* 右半邊兩個內容層 */
-        .p13-layer {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .p13-layer.p13-img-layer {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .p13-layer.p13-vid-layer {
-            opacity: 0;
-            transform: translateY(40px);
-        }
-
-        /* 切換到影片時 */
-        #slide-13.show-video .p13-layer.p13-img-layer {
-            opacity: 0;
-            transform: translateY(-40px);
-        }
-
-        #slide-13.show-video .p13-layer.p13-vid-layer {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* 影片填滿 */
-        .p13-vid-layer .video-wrap {
-            width: 100%;
-        }
-
-        .p13-vid-layer video {
-            max-height: min(60vh, 480px);
-            width: 100%;
-            object-fit: contain;
-        }
-
-        /* 切換提示指示器 */
-        .p13-scroll-hint {
-            position: absolute;
-            bottom: clamp(0.5rem, 1.5vh, 1rem);
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.3em;
-            font-family: var(--font-display);
-            font-size: var(--small-size);
-            color: var(--text-muted);
-            opacity: 1;
-            transition: opacity 0.5s ease;
-            pointer-events: none;
-            animation: p13hint 2s ease-in-out infinite;
-        }
-
-        #slide-13.show-video .p13-scroll-hint {
-            opacity: 0;
-        }
-
-        @keyframes p13hint {
-
-            0%,
-            100% {
-                transform: translateX(-50%) translateY(0);
-                opacity: 0.6;
-            }
-
-            50% {
-                transform: translateX(-50%) translateY(6px);
-                opacity: 1;
-            }
-        }
-
-        .p13-scroll-hint::after {
-            content: '▼';
-            font-size: 0.8em;
-            color: var(--accent-blue);
-        }
-
-        /* 影片狀態指示器 */
-        .p13-state-dot {
-            position: absolute;
-            bottom: clamp(0.5rem, 1.5vh, 1rem);
-            right: 1rem;
-            display: flex;
-            gap: 0.4em;
-            align-items: center;
-            z-index: 2;
-        }
-
-        .p13-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--text-muted);
-            transition: all 0.4s ease;
-        }
-
-        .p13-dot.active {
-            background: var(--accent-cyan);
-            box-shadow: 0 0 8px var(--accent-cyan);
-            transform: scale(1.5);
-        }
-
         /* Slide 14: Future */
         #slide-14 .future-tags {
             display: flex;
@@ -1112,10 +1017,23 @@
     <!-- Navigation dots (generated by JS) -->
     <nav class="nav-dots" id="navDots" aria-label="投影片導覽"></nav>
 
+    <!-- Global ITRI Logo (Hidden on Slide 1) -->
+    <div id="globalLogo"
+        style="position: fixed; bottom: clamp(1rem, 3vh, 2rem); left: clamp(1.5rem, 4vw, 4rem); z-index: 1000; transition: opacity 0.3s; opacity: 0; pointer-events: none;">
+        <img src="assets/pic/itri_EL_A.png" alt="工研院 Logo" style="height: clamp(25px, 4vh, 45px); object-fit: contain;">
+    </div>
+
     <!-- =====================================================
      SLIDE 1 — TITLE
      ===================================================== -->
     <section class="slide" id="slide-1" aria-label="封面">
+        <!-- 第一頁專屬 Logo -->
+        <div class="reveal d1"
+            style="position: absolute; top: clamp(1.5rem, 4vh, 3rem); right: clamp(1.5rem, 4vw, 4rem); z-index: 10;">
+            <img src="assets/pic/itri_EL_A.png" alt="工研院 Logo"
+                style="height: clamp(50px, 8vh, 100px); object-fit: contain; border-radius: 4px;">
+        </div>
+
         <!-- Background glow orb -->
         <div class="glow-orb"
             style="width:min(50vw,600px);height:min(50vw,600px);background:radial-gradient(circle,rgba(14,165,233,0.12),transparent 70%);top:-10%;right:-10%;">
@@ -1125,15 +1043,13 @@
         </div>
 
         <div class="slide-content">
-            <p class="org-tag reveal d1">新興運動科技計畫</p>
+            <p class="org-tag reveal d1">工業技術研究院 中分院團隊</p>
             <h1 class="reveal d2">
                 智慧<br>
                 <span class="accent">棒球</span><br>
                 科技
             </h1>
-            <p class="tagline reveal d3">整合 AI 視覺辨識、無標記式生物力學與雲端數據平台<br>打造台灣棒球的科技基礎建設</p>
-            <p class="tagline reveal d3" style="margin-top:0.3em;color:var(--text-muted);font-size:var(--small-size);">
-                場域科技化與跨域加值應用</p>
+            <p class="tagline reveal d3">整合 AI 視覺辨識、無標記式生物力學與跨平台雲端數據技術</p>
 
             <!-- Key stats -->
             <div class="stats-row reveal d4">
@@ -1153,7 +1069,41 @@
                 </div>
             </div>
         </div>
-        <div class="slide-num">01 / 13</div>
+        <div class="slide-num">01 / 12</div>
+    </section>
+
+    <!-- =====================================================
+     SLIDE 2 — 工研院簡介
+     ===================================================== -->
+    <section class="slide" id="slide-itri" aria-label="工研院簡介">
+        <div class="glow-orb"
+            style="width:min(40vw,500px);height:min(40vw,500px);background:radial-gradient(circle,rgba(14,165,233,0.10),transparent 70%);top:-5%;right:-5%;">
+        </div>
+        <div class="glow-orb"
+            style="width:min(30vw,400px);height:min(30vw,400px);background:radial-gradient(circle,rgba(34,211,238,0.06),transparent 70%);bottom:0;left:0;">
+        </div>
+        <div class="slide-content">
+            <div class="two-col">
+                <div>
+                    <span class="chapter-tag reveal d1">工研院簡介</span>
+                    <div class="accent-line reveal d2"></div>
+                    <h2 class="reveal d2">工業技術研究院<br><span
+                            style="color:var(--accent-cyan);font-size:0.5em;font-weight:600;letter-spacing:0.04em;">Industrial
+                            Technology Research Institute</span></h2>
+                    <p class="reveal d3"
+                        style="margin-top:var(--content-gap);line-height:1.9;color:var(--text-secondary);font-size:var(--body-size);">
+                        工業技術研究院（ITRI）是台灣頂尖的非營利研發機構，致力於透過前瞻科技創新來推動產業升級與經濟發展。它扮演著連接學術界與產業界的關鍵橋樑，長期協助企業進行技術開發與移轉，藉此厚植台灣產業的國際競爭力。
+                    </p>
+                </div>
+                <div class="reveal-scale d3">
+                    <div class="img-carousel" style="aspect-ratio:2/1;max-height:min(56vh,440px);">
+                        <img src="assets/itri_intro1.jpg" alt="工業技術研究院園區照片一" class="slide-img">
+                        <img src="assets/itri_intro2.jpg" alt="工業技術研究院園區照片二" class="slide-img">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slide-num">02 / 12</div>
     </section>
 
     <!-- =====================================================
@@ -1164,17 +1114,17 @@
             <div class="two-col">
                 <!-- Left: text -->
                 <div class="content-side">
-                    <span class="chapter-tag reveal d1">1·BENCHMARK</span>
+                    <span class="chapter-tag reveal d1">INTRO</span>
                     <div class="accent-line reveal d2"></div>
-                    <h2 class="reveal d2">MLB 發展數據應用已經超過<br><span style="color:var(--accent-cyan)">20 年</span></h2>
+                    <h2 class="reveal d2">電腦視覺技術應用在棒球數據收集是<br><span style="color:var(--accent-cyan)">國際趨勢</span></h2>
 
                     <ul class="bullet-list" style="margin-top:var(--content-gap)">
                         <li class="reveal d3">美國職棒自 <strong style="color:var(--text-primary)">2002
                                 年</strong>起導入科技工具數據採集，<strong style="color:var(--text-primary)">2020 年</strong>全面採用鷹眼系統
                         </li>
-                        <li class="reveal d4">國內職棒聯盟規模較小，相關技術以導入 <strong
-                                style="color:var(--text-primary)">Trackman</strong> 系統為主</li>
-                        <li class="reveal d5">除了分析與訓練的應用，也提供觀賽娛樂服務</li>
+                        <li class="reveal d4">基層棒球訓練以導入 <strong
+                                style="color:var(--text-primary)">Trackman、Rapsodo </strong> 等移動式系統為主</li>
+                        <li class="reveal d5">工研院團隊2022年起開始研發電腦視覺(Computer Vision)數據捕捉系統</li>
                     </ul>
                 </div>
 
@@ -1184,7 +1134,7 @@
                 </div>
             </div>
         </div>
-        <div class="slide-num">02 / 13</div>
+        <div class="slide-num">03 / 12</div>
     </section>
 
     <!-- =====================================================
@@ -1196,14 +1146,14 @@
         </div>
 
         <div class="slide-content">
-            <span class="chapter-tag reveal d1">1·BENCHMARK</span>
+            <span class="chapter-tag reveal d1">BENCHMARK</span>
             <div class="accent-line reveal d2"></div>
             <h2 class="reveal d2">雷達 vs 攝影機</h2>
 
             <div class="vs-grid" style="margin-top:var(--content-gap)">
                 <!-- Radar column -->
                 <div class="vs-col reveal d3">
-                    <h3 class="radar-title">雷達系統</h3>
+                    <h3 class="radar-title">雷達系統 (Trackman)</h3>
                     <div class="vs-row"><span class="check">✓</span>數據量測快速</div>
                     <div class="vs-row"><span class="check">✓</span>架設簡便</div>
                     <div class="vs-row"><span class="cross">✗</span>無法捕捉球道軌跡</div>
@@ -1217,7 +1167,7 @@
 
                 <!-- Camera column -->
                 <div class="vs-col highlight reveal d4">
-                    <h3>攝影機視覺系統</h3>
+                    <h3>攝影機視覺系統 (Our Solution)</h3>
                     <div class="vs-row"><span class="check">✓</span>完整球道軌跡追蹤</div>
                     <div class="vs-row"><span class="check">✓</span>16 項投球指標全覆蓋</div>
                     <div class="vs-row"><span class="check">✓</span>縫線效應 (SSW) 偵測</div>
@@ -1227,12 +1177,9 @@
                 </div>
             </div>
 
-            <p class="reveal d5"
-                style="margin-top:var(--content-gap);font-size:var(--small-size);color:var(--text-muted);">
-                ＊115 年包含所有 MLB Statcast 公開數據，其中揮擊軌跡、擊球落點、出手延伸等數據更是只有電腦視覺技術才能捕捉到的
-            </p>
+
         </div>
-        <div class="slide-num">03 / 13</div>
+        <div class="slide-num">04 / 12</div>
     </section>
 
     <!-- =====================================================
@@ -1240,7 +1187,7 @@
      ===================================================== -->
     <section class="slide" id="slide-4" aria-label="3大研發重點">
         <div class="slide-content" style="justify-content:flex-start;padding-top:clamp(1.2rem,3vh,2.5rem)">
-            <span class="chapter-tag reveal d1">2 · 核心技術</span>
+            <span class="chapter-tag reveal d1">核心技術</span>
             <div class="accent-line reveal d2"></div>
             <h2 class="reveal d2">3大研發重點</h2>
 
@@ -1269,7 +1216,7 @@
                 <!-- Card 03 -->
                 <div class="feature-card">
                     <div class="card-num">03</div>
-                    <h3>雲端數據平台</h3>
+                    <h3>跨平台雲端數據技術</h3>
                     <p>賽後雲端分析、歷史數據查詢<br>3D 渲染轉播服務</p>
                     <div class="card-img-wrap">
                         <img src="assets/slide4_img2.png" alt="球速數據圖表" class="card-img">
@@ -1277,7 +1224,7 @@
                 </div>
             </div>
         </div>
-        <div class="slide-num">04 / 13</div>
+        <div class="slide-num">05 / 12</div>
     </section>
 
     <!-- =====================================================
@@ -1297,20 +1244,20 @@
                                 項投球指標</strong>即時量測：球速、旋轉數、旋轉軸、縫線效應（SSW）</li>
                         <li class="reveal d4">依照打者身高<strong style="color:var(--text-primary)">自動判斷好壞球</strong></li>
                         <li class="reveal d5"><strong style="color:var(--text-primary)">自動球種辨識</strong>精準分類各類投球</li>
-                        <li class="reveal d5"><strong style="color:var(--text-primary)">一公分以內誤差</li>
+                        <li class="reveal d5"><strong style="color:var(--text-primary)">10mm 以內誤差</li>
                     </ul>
-                    <a href="http://localhost:3000" target="_blank" class="video-badge reveal d6"
-                        style="text-decoration:none;">Demo ① 球種辨識</a>
                 </div>
 
-                <!-- Right: image -->
+                <!-- Right: video -->
                 <div class="reveal-scale d3" style="display:flex;align-items:center;justify-content:center;">
-                    <img src="assets/slide5_img1.png" alt="電子好球帶球點分布圖" class="slide-img"
-                        style="max-height:min(72vh,600px);width:100%;object-fit:contain;">
+                    <div class="video-wrap" style="max-height:min(72vh,600px);width:100%;">
+                        <video src="assets/slide5_3dabs.mp4" autoplay muted loop playsinline
+                            aria-label="電子好球帶 3D 好球帶展示影片"></video>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="slide-num">05 / 13</div>
+        <div class="slide-num">06 / 12</div>
     </section>
 
     <!-- =====================================================
@@ -1333,25 +1280,25 @@
                         <li class="reveal d5"><strong style="color:var(--text-primary)">出手點辨識</strong>（Release
                             Point），精準分析動作變化</li>
                     </ul>
-                    <div class="video-badge reveal d6">Demo ③ 出手點辨識實錄</div>
                 </div>
 
                 <!-- Right: video -->
-                <div class="reveal-scale d4">
-                    <div class="video-wrap" style="transform: scale(1.2); transform-origin: right center;">
+                <div class="reveal-scale d4" style="display:flex;justify-content:flex-end;align-items:center;">
+                    <div class="video-wrap" style="width:fit-content;max-width:100%;">
                         <video src="assets/demo1_bio_multiview.mp4" autoplay muted loop playsinline
+                            style="width:auto;max-width:100%;max-height:min(72vh,600px);"
                             aria-label="無標記式生物力學多視角 Demo 影片"></video>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="slide-num">06 / 13</div>
+        <div class="slide-num">07 / 12</div>
     </section>
 
     <!-- =====================================================
-     SLIDE 7 — 核心技術③ 雲端數據平台
+     SLIDE 7 — 核心技術③ 跨平台雲端數據技術
      ===================================================== -->
-    <section class="slide" id="slide-7" aria-label="核心技術三 雲端數據平台">
+    <section class="slide" id="slide-7" aria-label="核心技術三 跨平台雲端數據技術">
         <div class="glow-orb"
             style="width:min(25vw,450px);height:min(25vw,450px);background:radial-gradient(circle,rgba(16,185,129,0.07),transparent 70%);bottom:0;right:0;">
         </div>
@@ -1359,7 +1306,7 @@
         <div class="slide-content" style="justify-content:flex-start;padding-top:clamp(1.2rem,3vh,2.5rem)">
             <span class="chapter-tag reveal d1">核心技術 ③</span>
             <div class="accent-line reveal d2"></div>
-            <h2 class="reveal d2">雲端數據平台</h2>
+            <h2 class="reveal d2">跨平台雲端數據技術</h2>
 
             <!-- Two-column: bullets left, video right -->
             <div class="core-tech-layout"
@@ -1390,12 +1337,12 @@
                     style="display:flex;align-items:center;justify-content:center;min-height:0">
                     <div class="video-wrap" style="width:100%; transform: scale(1.05); transform-origin: right center;">
                         <video src="assets/platform_demo0827.mp4" autoplay muted loop playsinline
-                            style="max-height:min(60vh,480px);" aria-label="雲端數據平台 Demo 影片"></video>
+                            style="max-height:min(60vh,480px);" aria-label="跨平台雲端數據技術 Demo 影片"></video>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="slide-num">07 / 13</div>
+        <div class="slide-num">08 / 12</div>
     </section>
 
     <!-- =====================================================
@@ -1404,7 +1351,7 @@
     <section class="slide venue-slide" id="slide-8" aria-label="天母棒球場場域導入">
         <div class="slide-content">
             <div style="position:relative; top:-2.5rem;">
-                <span class="chapter-tag reveal d1">3·場域導入成果</span>
+                <span class="chapter-tag reveal d1">場域導入成果</span>
             </div>
             <div class="two-col" style="align-items:flex-start;gap:clamp(1rem,2.5vw,2.5rem)">
                 <div style="position:relative; top:-2.5rem;">
@@ -1417,16 +1364,15 @@
                         <li class="reveal d4">電子好球帶、進階數據收集<strong style="color:var(--text-primary)">同步運作</strong></li>
                         <li class="reveal d5">職業中華職棒比賽<strong style="color:var(--text-primary)">實戰應用驗證</strong></li>
                     </ul>
-                    <div class="video-badge reveal d6">Demo ① 天母球場系統總覽</div>
                 </div>
                 <div class="reveal-scale d3"
                     style="display:flex;align-items:center; transform: scale(1.2); transform-origin: right center;">
-                    <img src="assets/slide8_img1.png" alt="天母棒球場攝影機配置示意圖" class="slide-img full-bleed"
+                    <img src="assets/slide8_img2.jpg" alt="天母棒球場攝影機配置示意圖" class="slide-img full-bleed"
                         style="max-height:min(65vh,540px);width:100%;object-fit:contain;">
                 </div>
             </div>
         </div>
-        <div class="slide-num">08 / 13</div>
+        <div class="slide-num">09 / 12</div>
     </section>
 
     <!-- =====================================================
@@ -1434,7 +1380,7 @@
      ===================================================== -->
     <section class="slide venue-slide" id="slide-9" aria-label="洲際棒球場與台北大巨蛋場域導入">
         <div class="slide-content" style="justify-content:flex-start;padding-top:clamp(1rem,2.5vh,2rem)">
-            <span class="chapter-tag reveal d1">3·場域導入成果</span>
+            <span class="chapter-tag reveal d1">場域導入成果</span>
             <div class="accent-line reveal d2"></div>
             <h2 class="reveal d2">洲際棒球場 &amp; 台北大巨蛋</h2>
 
@@ -1484,44 +1430,47 @@
 
             </div>
         </div>
-        <div class="slide-num">09 / 13</div>
+
+        <div class="slide-num">10 / 12</div>
     </section>
 
     <!-- =====================================================
-     SLIDE 10 — 進行中：龍潭名人堂 & 三重
+     SLIDE 10 — 場域導入成果：龍潭名人堂
      ===================================================== -->
-    <section class="slide" id="slide-10" aria-label="進行中場域導入">
+    <section class="slide" id="slide-10" aria-label="場域導入成果">
         <div class="slide-content">
-            <span class="chapter-tag reveal d1">3·進行中場域導入</span>
+            <span class="chapter-tag reveal d1">場域導入成果</span>
             <div class="accent-line reveal d2"></div>
-            <h2 class="reveal d2">龍潭名人堂 &amp; 三重棒球場</h2>
+            <h2 class="reveal d2">龍潭名人堂</h2>
+            <p class="reveal d3"
+                style="margin-top:0.4em;font-size:var(--h3-size);color:var(--accent-cyan);font-family:var(--font-display);font-weight:700">
+                打擊與生物力學系統研發實驗室
+            </p>
+            <p class="reveal d3"
+                style="margin-top:0.2em;font-size:var(--body-size);color:var(--text-secondary);">
+                社區棒球賽事與運科訓練營使用
+            </p>
 
-            <div
-                style="display:grid;grid-template-columns:1fr 1fr;gap:clamp(1rem,2.5vw,2.5rem);margin-top:var(--content-gap);align-items:start">
-                <!-- Left: 龍潭名人堂 -->
-                <div class="reveal d3">
-                    <h3 style="color:var(--accent-cyan);margin-bottom:0.4em">龍潭名人堂</h3>
-                    <div class="venue-grid">
-                        <div class="venue-img-wrap"><img src="assets/slide11_img1.png" alt="龍潭名人堂球場照片"></div>
-                        <div class="venue-img-wrap"><img src="assets/slide11_img2.png" alt="龍潭名人堂球場照片二"></div>
+            <div class="reveal-scale d4"
+                style="margin-top:var(--content-gap);flex:1;display:flex;align-items:center;justify-content:center;width:100%;">
+                <div
+                    style="display:flex;align-items:stretch;gap:clamp(0.6rem,1.5vw,1.2rem);width:100%;max-width:1500px;">
+                    <div class="venue-img-wrap" style="aspect-ratio:3/2;flex:1.5 1 0;">
+                        <img src="assets/slide11_img1.png" alt="龍潭名人堂球場照片一"
+                            style="width:100%;height:100%;max-height:100%;object-fit:cover;">
                     </div>
-                    <p style="margin-top:0.5em;font-size:var(--small-size)">建置內容：電子好球帶 + 投球生物力學分析</p>
-                    <p style="font-size:var(--small-size);color:var(--text-muted)">重點目標：數據影像收集與使用者回饋</p>
-                </div>
-
-                <!-- Right: 三重棒球場 -->
-                <div class="reveal d4">
-                    <h3 style="color:var(--accent-cyan);margin-bottom:0.4em">三重棒球場</h3>
-                    <div class="venue-grid">
-                        <div class="venue-img-wrap"><img src="assets/slide11_img3.png" alt="三重棒球場照片"></div>
-                        <div class="venue-img-wrap"><img src="assets/slide11_img4.png" alt="三重棒球場照片二"></div>
+                    <div class="venue-img-wrap" style="aspect-ratio:3/4;flex:0.75 1 0;">
+                        <img src="assets/slide11_img2.jpg" alt="龍潭名人堂球場照片二"
+                            style="width:100%;height:100%;max-height:100%;object-fit:cover;">
                     </div>
-                    <p style="margin-top:0.5em;font-size:var(--small-size)">建置內容：Phase 1 球體數據捕捉（Basler 高速攝影機）</p>
-                    <p style="font-size:var(--small-size);color:var(--text-muted)">重點目標：球體縫線、位移計算及效能提升</p>
+                    <div class="venue-img-wrap" style="aspect-ratio:3/2;flex:1.5 1 0;">
+                        <img src="assets/slide11_img3.jpg" alt="龍潭名人堂球場照片三"
+                            style="width:100%;height:100%;max-height:100%;object-fit:cover;">
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="slide-num">10 / 13</div>
+        <div class="slide-num">11 / 12</div>
     </section>
 
     <!-- =====================================================
@@ -1552,112 +1501,14 @@
                     </ul>
                 </div>
                 <div class="reveal-scale d3">
-                    <img src="assets/slide12_img1.jpg" alt="工研院技術人員在紅葉國小為球員講解數據" class="slide-img"
-                        style="max-height:min(46vh,380px);">
-                </div>
-            </div>
-        </div>
-        <div class="slide-num">11 / 13</div>
-    </section>
-
-    <!-- =====================================================
-     SLIDE 12 — 研發歷程 (Chapter divider)
-     ===================================================== -->
-    <section class="slide chapter-slide" id="slide-12" aria-label="研發歷程與未來規劃">
-        <div class="chapter-num">04</div>
-        <div class="glow-orb"
-            style="width:min(50vw,600px);height:min(50vw,600px);background:radial-gradient(circle,rgba(14,165,233,0.08),transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);">
-        </div>
-
-        <div class="slide-content" style="justify-content:center">
-            <span class="chapter-tag reveal d1">4·未來方向</span>
-            <div class="accent-line reveal d2"></div>
-            <h2 class="reveal d2">研發歷程與<br>未來規劃</h2>
-            <p class="reveal d3"
-                style="margin-top:var(--content-gap);font-size:var(--h3-size);color:var(--accent-cyan);font-family:var(--font-display);font-weight:700">
-                114 年 → 116 年 技術發展重點
-            </p>
-
-            <div class="timeline reveal d4">
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-year">114 年</div>
-                    <div class="timeline-content">
-                        電子好球帶<br>
-                        天母 · 洲際場域導入<br>
-                        無標記生物力學與出手點捕捉<br>
-                        基層學校 - 紅葉國小 + 忠孝國中
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-year">115 年</div>
-                    <div class="timeline-content">
-                        視覺辨識技術強化<br>
-                        名人堂 · 三重棒球場建置<br>
-                        揮棒軌跡分析技術<br>
-                        雲端分析介面
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-year">116 年</div>
-                    <div class="timeline-content">
-                        擊球點分析(球棒+球)<br>
-                        4DGS影像重建<br>
-                        模組化訓練分析系統
+                    <div class="img-carousel">
+                        <img src="assets/slide12_img1.jpg" alt="工研院技術人員在紅葉國小為球員講解數據" class="slide-img">
+                        <img src="assets/slide12_img2.jpg" alt="紅葉國小球員使用智慧棒球系統訓練" class="slide-img">
                     </div>
                 </div>
             </div>
         </div>
-        <div class="slide-num">12 / 13</div>
-    </section>
-
-    <!-- =====================================================
-     SLIDE 13 — 未來方向
-     ===================================================== -->
-    <section class="slide" id="slide-13" aria-label="未來方向">
-        <div class="glow-orb"
-            style="width:min(40vw,500px);height:min(40vw,500px);background:radial-gradient(circle,rgba(14,165,233,0.1),transparent 70%);top:-5%;right:-5%;">
-        </div>
-
-        <div class="slide-content"
-            style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; padding-top:0;">
-            <!-- 圖片 → 影片切換容器 -->
-            <div class="reveal-blur d1" style="position:relative; width:90%; max-width:1400px; height:85vh;">
-                <div class="p13-right-wrap"
-                    style="height:100%; display:flex; align-items:center; justify-content:center;">
-
-                    <!-- 層① 原始圖片 -->
-                    <div class="p13-layer p13-img-layer"
-                        style="width:100%; height:100%; display:flex; justify-content:center; align-items:center;">
-                        <img src="assets/slide14_img1.png" alt="Magnus/SSW 位移分離分析工具介面" class="slide-img"
-                            style="max-height:100%; max-width:100%; object-fit:contain;">
-                    </div>
-
-                    <!-- 層② 動作捕捉影片（滾動後顯示） -->
-                    <div class="p13-layer p13-vid-layer"
-                        style="width:100%; height:100%; display:flex; justify-content:center; align-items:center;">
-                        <div class="video-wrap"
-                            style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:transparent; border:none;">
-                            <video id="p13Video" src="assets/demo9_motion_capture.mp4" muted loop playsinline
-                                preload="metadata" aria-label="動作捕捉訓練情境 Demo 影片"
-                                style="max-height:100%; max-width:100%; object-fit:contain; border-radius:8px; border:1px solid var(--border-subtle);"></video>
-                        </div>
-                    </div>
-
-                    <!-- 狀態點指示器 -->
-                    <div class="p13-state-dot">
-                        <div class="p13-dot active" id="p13Dot0"></div>
-                        <div class="p13-dot" id="p13Dot1"></div>
-                    </div>
-                </div>
-
-                <!-- 捲動提示 -->
-                <div class="p13-scroll-hint" id="p13ScrollHint">向下捲動查看 Demo</div>
-            </div>
-        </div>
-        <div class="slide-num">13 / 13</div>
+        <div class="slide-num">12 / 12</div>
     </section>
 
     <!-- ===========================================
@@ -1711,6 +1562,12 @@
                                 this.current = idx;
                                 this.updateNavDots(idx);
                                 this.updateProgress(idx);
+
+                                const globalLogo = document.getElementById('globalLogo');
+                                if (globalLogo) {
+                                    globalLogo.style.opacity = idx === 0 ? '0' : '1';
+                                    globalLogo.style.pointerEvents = idx === 0 ? 'none' : 'auto';
+                                }
                             }
                         }
                     });
@@ -1753,8 +1610,7 @@
                 });
             }
 
-            /* Touch swipe support
-               NOTE: slide-13 同樣攔截觸控，實作右半邊切換 */
+            /* Touch swipe support */
             setupTouch() {
                 let startY = 0;
                 document.addEventListener('touchstart', e => {
@@ -1763,56 +1619,16 @@
                 document.addEventListener('touchend', e => {
                     const dy = startY - e.changedTouches[0].clientY;
                     if (Math.abs(dy) < 50) return;
-
-                    const slide13 = document.getElementById('slide-13');
-                    const isOnSlide13 = (this.current === this.slides.indexOf(slide13));
-
-                    if (isOnSlide13 && slide13) {
-                        const isVideoShown = slide13.classList.contains('show-video');
-                        if (dy > 0 && !isVideoShown) {
-                            slide13VideoToggle(true);
-                            return;
-                        }
-                        if (dy < 0 && isVideoShown) {
-                            slide13VideoToggle(false);
-                            return;
-                        }
-                    }
-
                     this.goTo(this.current + (dy > 0 ? 1 : -1));
                 }, { passive: true });
             }
 
-            /* Mouse wheel with throttle
-               NOTE: slide-13 有特殊中間狀態（右半邊圖→影片切換），
-               需要攔截第一次往下捲動事件，用於切換右半邊內容 */
+            /* Mouse wheel with throttle */
             setupWheel() {
                 let lastTime = 0;
                 document.addEventListener('wheel', e => {
                     const now = Date.now();
                     if (now - lastTime < 800) return;
-
-                    const slide13 = document.getElementById('slide-13');
-                    const isOnSlide13 = (this.current === this.slides.indexOf(slide13));
-
-                    if (isOnSlide13 && slide13) {
-                        const isVideoShown = slide13.classList.contains('show-video');
-
-                        if (e.deltaY > 0 && !isVideoShown) {
-                            // 第一次向下：切換至影片，不換頁
-                            lastTime = now;
-                            slide13VideoToggle(true);
-                            return;
-                        }
-                        if (e.deltaY < 0 && isVideoShown) {
-                            // 向上：切換回圖片，不換頁
-                            lastTime = now;
-                            slide13VideoToggle(false);
-                            return;
-                        }
-                        // 其他情況（影片已顯示再往下 or 圖片狀態再往上）→ 正常換頁
-                    }
-
                     lastTime = now;
                     this.goTo(this.current + (e.deltaY > 0 ? 1 : -1));
                 }, { passive: true });
@@ -1839,32 +1655,6 @@
             }
         }
 
-        /* =====================================================
-           Slide 13 右半邊切換 helper
-           ===================================================== */
-        function slide13VideoToggle(showVideo) {
-            const slide13 = document.getElementById('slide-13');
-            const video = document.getElementById('p13Video');
-            const dot0 = document.getElementById('p13Dot0');
-            const dot1 = document.getElementById('p13Dot1');
-            const hint = document.getElementById('p13ScrollHint');
-
-            if (!slide13 || !video) return;
-
-            if (showVideo) {
-                slide13.classList.add('show-video');
-                video.play().catch(() => { });
-                if (dot0) dot0.classList.remove('active');
-                if (dot1) dot1.classList.add('active');
-            } else {
-                slide13.classList.remove('show-video');
-                video.pause();
-                video.currentTime = 0;
-                if (dot0) dot0.classList.add('active');
-                if (dot1) dot1.classList.remove('active');
-            }
-        }
-
         /* Boot */
         document.addEventListener('DOMContentLoaded', () => {
             new SlidePresentation();
@@ -1872,20 +1662,6 @@
             /* Trigger visible for first slide immediately */
             const first = document.querySelector('.slide');
             if (first) first.classList.add('visible');
-
-            /* Slide 13：當離開此頁時，重置右半邊回圖片狀態 */
-            const slide13 = document.getElementById('slide-13');
-            if (slide13) {
-                const resetObs = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (!entry.isIntersecting) {
-                            // 離開 slide-13 時重置
-                            slide13VideoToggle(false);
-                        }
-                    });
-                }, { threshold: 0.1 });
-                resetObs.observe(slide13);
-            }
         });
     </script>
 
